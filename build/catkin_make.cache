@@ -1,0 +1,2 @@
+mobile_robot_description:mobile_robot_pkg
+-DCATKIN_DEVEL_PREFIX=/home/tom/Dev/two-wheel-robot_ws/devel -DCMAKE_INSTALL_PREFIX=/home/tom/Dev/two-wheel-robot_ws/install -G Unix Makefiles

@@ -1,0 +1,29 @@
+<launch>
+  
+  <!-- Load the Gazebo simulation environment -->
+  <include file="$(find gazebo_ros)/launch/empty_world.launch">
+    <arg name="use_sim_time" value="true"/>
+    <arg name="world_name" value="$(find mobile_robot_description)/worlds/your_world_name.world"/>
+  </include>
+
+  <!-- Launch robot visualization in Rviz with Fixed frame as Odom -->
+  <include file="$(find mobile_robot_description)/launch/view_robot.launch" />
+
+  <!-- Load the robot description -->
+  <param name="robot_description" command="$(find xacro)/xacro --inorder $(find mobile_robot_description)/urdf/robot_model.xacro" />
+
+  <!-- Spawn the robot model in Gazebo -->
+  <node name="spawn_robot" pkg="gazebo_ros" type="spawn_model" args="-urdf -param robot_description -model mobile_robot" />
+
+  <!-- ROS Serial driver for handling Bluetooth serial port -->
+  <!-- <node name="robot_bt_driver_node" pkg="rosserial_python" type="serial_node.py" args="_port:=/dev/rfcomm0 _baud:=9600" output="screen">
+  </node> -->
+
+  <node name="robot_motion_simulator" pkg="mobile_robot_pkg" type="robot_motion_simulator.py" output="screen" />
+
+  <!-- Differential drive node to convert twist to motor speed, encoder ticks to odom and goal pose to command velocity -->
+  <node pkg="mobile_robot_pkg" type="twist_to_motors.py" name="twist_to_motors" output="screen"/>
+  <node pkg="mobile_robot_pkg" type="diff_tf.py" name="diff_tf" output="screen"/> 
+  <node pkg="mobile_robot_pkg" type="dead_reckoning.py" name="dead_reckoning" output="screen"/> 
+
+</launch>
